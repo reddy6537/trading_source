@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kite Connect - Redirect Catcher</title>
+<style>
+  body {
+    font-family: -apple-system, system-ui, sans-serif;
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 0 20px;
+    color: #1a1a1a;
+    background: #fafafa;
+  }
+  h1 { font-size: 1.3rem; }
+  .box {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  .token {
+    font-family: monospace;
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 4px;
+    word-break: break-all;
+    font-size: 0.95rem;
+  }
+  button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #387ed1;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  button:hover { background: #2d65a8; }
+  .warn { color: #b94a48; font-size: 0.85rem; margin-top: 10px; }
+  .status-ok { color: #2a7a2a; }
+  .status-error { color: #b94a48; }
+</style>
+</head>
+<body>
+  <h1>Kite Connect — Login Redirect</h1>
+  <div class="box">
+    <div id="content">Reading redirect parameters…</div>
+  </div>
+  <p class="warn">
+    This page only displays the token locally in your browser — it is not
+    sent or stored anywhere else. Request tokens expire in 5 minutes and
+    can only be used once, so copy it and use it right away.
+  </p>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const requestToken = params.get("request_token");
+  const status = params.get("status");
+  const contentDiv = document.getElementById("content");
+
+  if (requestToken) {
+    contentDiv.innerHTML = `
+      <p class="status-ok">Login successful. Status: ${status || "n/a"}</p>
+      <p><strong>request_token:</strong></p>
+      <div class="token" id="tokenText">${requestToken}</div>
+      <button onclick="copyToken()">Copy token</button>
+    `;
+  } else {
+    contentDiv.innerHTML = `
+      <p class="status-error">No request_token found in the URL.</p>
+      <p>This page is meant to be reached only via Kite's login redirect
+      after a successful login — not opened directly.</p>
+    `;
+  }
+
+  function copyToken() {
+    const text = document.getElementById("tokenText").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Copied to clipboard");
+    });
+  }
+</script>
+</body>
+</html>
